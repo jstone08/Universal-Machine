@@ -1,0 +1,107 @@
+
+Design Document
+UM Emulator
+Date: 11/14/16
+Jordan Stone & Hazen Breen 
+
+UM Design:
+
+Major Components of Program:
+----------------------------
+
+There will be three major components of our program.  They are the 
+input/output device, the simulated main memory, and the 14 instructions for 
+the Universal Machine.  The first component is a source file, um.c, that will 
+contain the implementation of the fourteen instructions of the Universal 
+Machine. The second major component is the simulated memory source file, 
+sim_mem.c. This file will contain the dynamic array which will represent 
+the main memory of the UM, this array will hold segments which will be 
+represented as Hanson Sequences.  The third component is the I/O device, 
+io_device.c, which will contain the abstraction for displaying 255 ASCII 
+characters and performing input and output of those characters.  The 
+implementation of the Universal Machine will be decoupled from the 
+program loader and the main() function by having the a source file 
+call the necessary modules to run the UM.
+
+To compile, run:
+make interfaces
+
+Component Interaction & Architecture:
+-------------------------------------
+
+The components in the program will interact in the following ways. The UM 
+will need to store data from its eight registers inside the simulated main 
+memory; thus, the um.c source file will have access to the interface of 
+sim_mem.c to store and extract data. Note, there will be a 32-bit identifier 
+to serve as the program counter which will be used in keeping track of the 
+words in the 0 segment.  However it is important to note that sim_mem.c will 
+not have access to um.c or iodevice.c . A memory segment will need to be 
+generated from within the sim_mem.c file in order for the memory to store 
+segments. Additionally, the instructions of the UM will need to have access 
+to the segment ADT.                                                        
+
+The program will contain three main data structures. The first data 
+structure will be an eight element array which will represented the eight 
+registers of the UM. This array will be stored inside um.c. Each element 
+contains space for a 32-bit word. The implementation of the UM’s 14 
+instructions will manipulate the registers, communicate with the simulated 
+memory, and call the input/output device. 
+
+The second data structure in this program will simulate main memory. It will 
+be simulated with a dynamic array, each element shall contain a segment. 
+The 32-bit identifier of each segment of memory will be the 4-byte integer 
+index of the dynamic array.  
+
+The third data structure will be a Hanson Sequence in order to optimize main 
+memory mapping. This sequence will act as a queue. This queue will hold any 
+Segment ID for a location in main memory that has been freed. When mapping 
+for a new segment of simulated memory, we will first check if there is any 
+Segment ID on the queue, if there is, that shall be what is returned by the 
+map function. This will allow us to use 32-bit segment identifiers that have 
+been unmapped. If the queue is empty, we shall iterate to the next space in 
+the simulated main memory dynamic array. We will store the next available 
+location of main memory, ignoring freed locations, with a global iterator. 
+
+
+
+Testing:
+--------
+
+To compile, run
+make tests
+
+To see our test cases to test the segment representation and 
+accessing/manipulation, see test_segment.c. We have devised robust tests 
+for our simulated main memory.  To be sure our main memory is working, we test 
+whether segments can be created and stored correctly.  We will also test our 
+ability to unmap segments, and then reuse the unmapped segment ID. 
+
+For the other parts of the UM, we will have test cases for each of the 
+fourteen individual UM operations.  The tests that will test instruction 
+10 (output) and 11 (input) directly interact with the input/output device.  
+We will have robust test to ensure the functionality of the I/O device and 
+the I/O UM operations, such as empty files, unexpected characters, and very 
+large files.   
+
+
+
+UM Segment Abstract Data Type Design:
+-------------------------------------
+                                                        
+We are trying to represent a piece of memory, which will hold 32-bit words. 
+
+We will represent a segment of memory as a Hanson Sequence. As with most 
+Hanson data types, an instance of a Hanson Sequence is actually a pointer 
+to a Sequence. Each element of the sequence will be a 32-bit word.  
+
+For the 0 segment, the only thing that will be stored will be a sequence 
+of instructions.  For every other segment it shall be used as the program 
+requires.   Every segment will have unique 32 bit segment ID. Segments can 
+be created with different sizes, but are not dynamic once created.
+
+A segment represents a list of words, each of which represent some piece 
+of data whether it be an instruction or a value which need to be stored or 
+used to run the program.
+
+
+

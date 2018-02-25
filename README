@@ -1,0 +1,96 @@
+README
+Universal Machine
+ 
+By: Jordan Stone and Hazen Breen
+ 
+Date: 11/21/16
+
+
+Architecture
+----------------------
+Our architecture remained mostly the same from our design. There were two major
+changes.  The first was that the segmented memory is now represented by a 
+Hanson Sequence.  This is because a Sequence is easy to expand in size.  
+This allows the code for memory to map and unmap segments to be more simple.
+The other change was that segments are now represented by UArray_T's.  This is
+because a segments's size does not change, so a Sequence is uneccessary.  
+
+
+We have three modules.  The first is CPU, which represents the Central
+Processing Unit of the Universal Machine. The CPU initializes the UM and 
+runs the program by calling the appropriate UM instructions. 
+
+The second module is the Arithmatic Logic Unit, or the ALU.  The ALU contains
+the functions which carry out the UM instructions.  The ALU also controls the 
+registers.  
+
+The ALU calls the third module, Segmented Memory, whenever
+memory must be accessed.  Segmented Memory implements a representation of 
+main memory with a Seq_T. Each individual segment is represented with a 
+Urray_T.  
+
+All the modules share the secret of the types of the data structures, but only 
+Segmented Memory directly manipulates them.  Also shared between all
+modules is a Seq_T that stores all the unmapped segment ID's.
+
+
+
+Estimated Run Time 
+-----------------------
+It will take our UM approximately 0.35 seconds to run 50 million instructions.
+This is because it will take our implementation of the UM 2 ns to get get 
+an instruction, as it must dereference 2 pointers.  Getting out the right
+opcode will take another ns.
+Running the opcode can take anywhere from 2 to many ns, so if we assume an 
+average of 4 ns per instruction, it will take 7 ns to run any one 
+instruction.  Multiply this by 50 million, and we get 0.35 seconds.
+
+
+UM Instruction Tests
+-------------------------
+halt.um - This tests the halt instruction by calling the halt isntruction.
+halt-verbose.um - This tests the halt instruction by halting and having 
+        instructions after the halt command.  If none of the other instructions
+        are run, the test is successful.
+load-val.um - This tests the load value instruction by loading a value into 
+        a register and outputting the result.
+add.um - This tests the add instruction by adding two numbers.
+print-six.um - This tests the add and output instructions by adding two numbers
+        and outputting the result
+mul.um - This tests the multiply instruction by multiplying two numbers and 
+        outputting the result. 
+div.um - This tests the divide instruction by dividing two numbers and 
+        outputting the result.
+conditional-move_fail.um -  This test will place zero in the register that 
+        is the condition for the conditional move.  The conditional move should
+        not be performed.
+conditional-move_success.um - This test will place a non-zero value in the 
+        register that is the condition for the conditional move.  The 
+        conditional move should be performed.
+mem1.um - This tests the functionality of the map instruction, the segmented
+        store instruction, and the segmented load instruction.  A value is 
+        loaded and placed in memory, then removed from memory and outputted.
+mem2.um - This tests the functionality of the ability of memory to store 
+        values that necessitate 32 bits to store.  A value that uses 32 bits is
+        stored and the removed from memory. 
+unmap.um - This tests the functionality of the unmap instruction.  Multiple 
+        segments are mapped, then one in the middle of memory is unmapped. One 
+        more segment is mapped and its seg_ID is returned.  The seg_ID must be
+        the same as the unmapped seg ID.
+load-program.um - This test the load-program instruction by calling the function
+        right before a halt instruction.  The UM should jump over the halt to
+        an output, and then should halt.  So if there is output, the test is 
+        successful.
+input-64.um - This tests the input instruction by inputting two ASCII characters
+        and then prints them back out.  It tests the ability of the input 
+        instruction to read multiple characters and to read until the end of 
+        the input file.
+
+  
+
+Time Spent
+---------------
+We spent approximately 16 hours analyzing this assignment.  We spent 
+approximately 9 hours preparing our design.  We spent approximately 26 hours
+solving the proglems and implementing our design.  In total, we spent 51 
+hours on this project. 
